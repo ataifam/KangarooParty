@@ -1,7 +1,16 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.EntityFrameworkCore;
+using KangarooParty.Data;
+using Microsoft.Data.SqlClient;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var DBConnStr = new SqlConnectionStringBuilder(
+        builder.Configuration.GetConnectionString("KangarooParty"));
+DBConnStr.Password = builder.Configuration["DBpass"];
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(DBConnStr.ConnectionString));
 
 var app = builder.Build();
 
