@@ -33,7 +33,7 @@ namespace KangarooParty.Migrations
                     b.Property<int?>("AttendingPartyId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HostingPartyId")
+                    b.Property<int?>("HostingPartyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -48,7 +48,8 @@ namespace KangarooParty.Migrations
                     b.HasIndex("AttendingPartyId");
 
                     b.HasIndex("HostingPartyId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[HostingPartyId] IS NOT NULL");
 
                     b.ToTable("Kangaroos");
                 });
@@ -77,9 +78,7 @@ namespace KangarooParty.Migrations
 
                     b.HasOne("KangarooParty.Models.Party", "HostingParty")
                         .WithOne("Host")
-                        .HasForeignKey("KangarooParty.Models.Kangaroo", "HostingPartyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KangarooParty.Models.Kangaroo", "HostingPartyId");
 
                     b.Navigation("AttendingParty");
 
@@ -90,7 +89,8 @@ namespace KangarooParty.Migrations
                 {
                     b.Navigation("Attendees");
 
-                    b.Navigation("Host");
+                    b.Navigation("Host")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

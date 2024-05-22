@@ -31,7 +31,7 @@ namespace KangarooParty.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Pic = table.Column<int>(type: "int", nullable: false),
-                    HostingPartyId = table.Column<int>(type: "int", nullable: false),
+                    HostingPartyId = table.Column<int>(type: "int", nullable: true),
                     AttendingPartyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -46,8 +46,7 @@ namespace KangarooParty.Migrations
                         name: "FK_Kangaroos_Parties_HostingPartyId",
                         column: x => x.HostingPartyId,
                         principalTable: "Parties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -59,7 +58,8 @@ namespace KangarooParty.Migrations
                 name: "IX_Kangaroos_HostingPartyId",
                 table: "Kangaroos",
                 column: "HostingPartyId",
-                unique: true);
+                unique: true,
+                filter: "[HostingPartyId] IS NOT NULL");
         }
 
         /// <inheritdoc />

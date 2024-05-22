@@ -16,7 +16,7 @@ namespace KangarooParty.Data
                 .HasOne(e => e.Host)
                 .WithOne(e => e.HostingParty)
                 .HasForeignKey<Kangaroo>(e => e.HostingPartyId)
-                .IsRequired();
+                .IsRequired(false);
 
             modelBuilder.Entity<Party>()
                 .HasMany(e => e.Attendees)
