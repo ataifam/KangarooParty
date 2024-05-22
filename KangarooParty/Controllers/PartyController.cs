@@ -53,7 +53,6 @@ namespace KangarooParty.Controllers
                 await dbContext.AddAsync(party);
                 await dbContext.SaveChangesAsync();
             }
-
             return View();
         }
     }

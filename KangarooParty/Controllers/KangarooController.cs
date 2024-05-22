@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using KangarooParty.Data;
 using KangarooParty.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,9 +20,11 @@ namespace KangarooParty.Controllers
             dbContext = DbContext;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var kangaroos = await dbContext.Kangaroos.Include(c => c.HostingParty).ToListAsync();
+            return View(kangaroos);
         }
 
         [HttpGet]
