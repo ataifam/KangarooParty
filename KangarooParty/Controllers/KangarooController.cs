@@ -36,16 +36,57 @@ namespace KangarooParty.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateKangarooModel template)
         {
-            var kangaroo = new Kangaroo
+            if(template.Name != null)
             {
-                Name = template.Name,
+                var kangaroo = new Kangaroo
+                {
+                    Name = template.Name,
 
-            };
+                };
 
-            await dbContext.AddAsync(kangaroo);
-            await dbContext.SaveChangesAsync();
+                await dbContext.AddAsync(kangaroo);
+                await dbContext.SaveChangesAsync();
 
+                return RedirectToAction("Index");
+            }
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> KangarooInfo(int id)
+        {
+            //include all kangaroo related fields, then query specific kangaroo 
+            var kangaroo = await dbContext.Kangaroos
+                .Include(c => c.HostingParty)
+                .Include(c => c.AttendingParty)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (kangaroo != null)
+            {
+                return View(kangaroo);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        //html functionality needed
+        [HttpPost]
+        public async Task<IActionResult> KangarooInfo(Kangaroo template)
+        {
+            //include all kangaroo related fields, then query specific kangaroo 
+            var kangaroo = await dbContext.Kangaroos
+                .Include(c => c.HostingParty)
+                .Include(c => c.AttendingParty)
+                .FirstOrDefaultAsync(c => c.Id == template.Id);
+
+            if (kangaroo != null)
+            {
+                kangaroo.Name = template.Name;
+
+                await dbContext.SaveChangesAsync();
+                return View(kangaroo);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

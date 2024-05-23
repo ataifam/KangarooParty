@@ -1,0 +1,24 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    @model KangarooParty.Models.Kangaroo
+
+
+            <center><h1>@Model.Name the Kangaroo</h1></center>
+        <div class="card mb-3">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                @if (Model.HostingParty != null)
+                {
+                    <p class="card-text"><a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.HostingPartyId">@Model.Name's Party</a></p>
+                }
+                else if (Model.AttendingParty != null)
+                {
+                    <p class="card-text">At <a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.AttendingPartyId">@Model.AttendingParty.Host.Name's Party</a></p>
+                }
+            </div>
+        </div>
+
+}
+

@@ -1,0 +1,21 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    @model KangarooParty.Models.Party
+
+        <center><h1>@Model.Host.Name's Party</h1></center>
+        <div class="card mb-3">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Prestige Level: @Model.Prestige</h5>
+                <h5 class="card-title">Kangaroo Attendees:</h5>
+                @foreach(Kangaroo k in Model.Attendees)
+                {
+                    <p class="card-text"><a asp-controller="Kangaroo" asp-action="KangarooInfo" asp-route-id="@k.Id">@k.Name</a></p>
+                }
+            </div>
+        </div>
+
+}
+

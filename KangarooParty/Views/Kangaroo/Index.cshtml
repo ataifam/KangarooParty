@@ -5,34 +5,33 @@
     @model List<KangarooParty.Models.Kangaroo>
     <h1>Kangaroos</h1>
 
-    <div class="container text-center">
-        <div class="row align-items-start">
-            @{int ColCounter = 0;}
-            @foreach (Kangaroo k in Model)
+    @if (Model != null)
+    {
+        <div class="container text-center">
+            <div class="row justify-content-evenly">
+                @foreach (Kangaroo k in Model)
                 {
-                <div class="col">
-                    <div class="card" style="width: 18rem;">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">@k.Name</h5>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            @if (k.HostingParty != null)
+                    <div class="col-auto">
+                        <div class="card" style="width: 18rem;">
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"><a asp-controller="Kangaroo" asp-action="KangarooInfo" asp-route-id="@k.Id">@k.Name</a></h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                @if (k.HostingParty != null)
                                 {
-                                <li class="list-group-item">@k.Name's party</li>
-                            }
-                        </ul>
+                                    <li class="list-group-item">@k.Name's party</li>
+                                }
+                            </ul>
+                        </div>
+                        <br />
                     </div>
-                </div>
-                //start new row once 3 cards occupy current
-                @if(++ColCounter == 3)
-                {
-                    <div class="w-100"></div>
-                    <br />
-                    ColCounter = 0;
                 }
-             }
+            </div>
         </div>
-        </div>
-        }
+    } else
+{
+                        <h3>Create a Kangaroo <a class="nav-link text-dark" asp-area="" asp-controller="Kangaroo" asp-action="Create">here</a>!</h3>
+}
+}
 
