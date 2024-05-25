@@ -35,10 +35,12 @@ namespace KangarooParty.Controllers
         public IActionResult Create()
         {
             //send all kangaroos to view 
-            ViewData["Kangaroos"] = new SelectList(
+            var data = new SelectList(
                 dbContext.Kangaroos.Where(c => c.HostingParty == null && c.AttendingParty == null),
                 "Id",
                 "Name");
+
+            ViewData["Kangaroos"] = data.Any() ? data : null;
 
             return View();
         }
@@ -57,7 +59,6 @@ namespace KangarooParty.Controllers
                 };
 
                 //assign kangaroo this new party to host
-                kangaroo.HostingParty = party;
                 kangaroo.HostingPartyId = party.Id;
 
                 await dbContext.AddAsync(party);
@@ -79,26 +80,43 @@ namespace KangarooParty.Controllers
 
             if (party != null)
             {
+                var data = new SelectList(
+                dbContext.Kangaroos.Where(c => c.HostingParty == null && c.AttendingParty == null),
+                "Id",
+                "Name");
+
+                ViewData["Kangaroos"] = data.Any() ? data : null;
+
                 return View(party);
             }
             return RedirectToAction("Index");
         }
 
-        //html functionality needed
         [HttpPost]
         public async Task<IActionResult> PartyInfo(Party template)
         {
-            //include all party related fields, then query specific party 
+            //new host kangaroo
+            var kangaroo = await dbContext.Kangaroos.FindAsync(template.Host.Id);
+
+            //current party
             var party = await dbContext.Parties
                 .Include(c => c.Host)
                 .Include(c => c.Attendees)
                 .FirstOrDefaultAsync(c => c.Id == template.Id);
 
-            if (party != null)
+            if (kangaroo != null && party != null)
             {
-                party.Host = template.Host;
+                //remove previous host
+                party.Host.HostingPartyId = null;
+                //assign new host
+                kangaroo.HostingPartyId = party.Id;
 
-                //add functionality for adding kangaroo attendees
+                var data = new SelectList(
+                dbContext.Kangaroos.Where(c => c.HostingParty == null && c.AttendingParty == null),
+                "Id",
+                "Name");
+
+                ViewData["Kangaroos"] = data.Any() ? data : null;
 
                 await dbContext.SaveChangesAsync();
                 return View(party);

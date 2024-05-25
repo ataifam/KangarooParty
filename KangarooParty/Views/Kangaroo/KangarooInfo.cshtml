@@ -5,8 +5,9 @@
     @model KangarooParty.Models.Kangaroo
 
 
-            <center><h1>@Model.Name the Kangaroo</h1></center>
-        <div class="card mb-3">
+    <center>
+        <h1>@Model.Name the Kangaroo</h1>
+        <div class="card mb-3 text-center" style="width: 48rem;">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
                 @if (Model.HostingParty != null)
@@ -19,6 +20,31 @@
                 }
             </div>
         </div>
+    </center>
+
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#hostModal">Edit...</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="hostModal" tabindex="-1" aria-labelledby="hostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post" class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="hostModalLabel">Kangaroo Editor</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h3>Change Name</h3>
+                        <input type="text" required class="form-control" asp-for="Name">
+                    <h3>Go to a Party</h3>
+                        <select class="form-select" asp-for="AttendingPartyId" asp-items="ViewBag.Parties"></select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 }
 

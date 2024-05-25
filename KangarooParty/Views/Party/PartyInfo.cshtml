@@ -4,18 +4,61 @@
 @{
     @model KangarooParty.Models.Party
 
-        <center><h1>@Model.Host.Name's Party</h1></center>
-        <div class="card mb-3">
+    <center>
+        <h1>@Model.Host.Name's Party</h1>
+        <div class="card mb-3 text-center" style="width: 48rem;">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">Prestige Level: @Model.Prestige</h5>
                 <h5 class="card-title">Kangaroo Attendees:</h5>
-                @foreach(Kangaroo k in Model.Attendees)
-                {
+                @foreach (Kangaroo k in Model.Attendees)
+                    {
                     <p class="card-text"><a asp-controller="Kangaroo" asp-action="KangarooInfo" asp-route-id="@k.Id">@k.Name</a></p>
-                }
+                    }
             </div>
         </div>
+    </center>
+
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#hostModal">Edit...</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="hostModal" tabindex="-1" aria-labelledby="hostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+             @if (ViewBag.Kangaroos != null)
+             {
+                <form method="post" class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="hostModalLabel">Change Host</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <!--  <label asp-for="Id" data="">'s Party</label>-->
+                        <select class="form-select" asp-for="Host.Id" asp-items="ViewBag.Kangaroos" required></select>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                    </div>
+                </form>
+              }
+              else
+              {
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="hostModalLabel">Change Host</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>No Kangaroos to transfer host ownership to!</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+              }
+        </div>
+    </div>
 
 }
 
