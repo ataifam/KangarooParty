@@ -3,17 +3,35 @@
 *@
 @{
     @model KangarooParty.Models.CreateKangarooModel
-    <h1>Create a Kangaroo</h1>
 
-        <form method="post">
-            <div class="mb-3 row">
-                    <label for="name" class="col-sm-2 col-form-label">Name</label>
-                    <div class="col-sm-4">
-                        <input type="text" required class="form-control" asp-for="Name">
-                    </div>
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>Create a Kangaroo</h1>
             </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" asp-controller="Kangaroo" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Kangaroo" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
 
-            <button type="submit" class="btn btn-primary mb-3">Submit</button>
-        </form>
+    <form method="post">
+        <div class="mb-3 row">
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-4">
+                <input type="text" required class="form-control" asp-for="Name">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </form>
 }
 

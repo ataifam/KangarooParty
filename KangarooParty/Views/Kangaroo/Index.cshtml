@@ -3,7 +3,24 @@
 *@
 @{
     @model List<KangarooParty.Models.Kangaroo>
-    <h1>Kangaroos</h1>
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>Kangaroos</h1>
+            </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Kangaroo" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Kangaroo" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
 
     @if (Model != null)
     {
@@ -13,7 +30,7 @@
                 {
                     <div class="col-auto">
                         <div class="card" style="width: 18rem;">
-                            <img src="..." class="card-img-top" alt="...">
+                            <img src="~/images/kangaroo@(k.Pic).jpg" style="width:17vw;align-self:center" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title"><a asp-controller="Kangaroo" asp-action="KangarooInfo" asp-route-id="@k.Id">@k.Name</a></h5>
                             </div>

@@ -65,15 +65,18 @@ namespace KangarooParty.Controllers
 
             if (kangaroo != null)
             {
-                var data = new SelectList(
-                dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
-                .Select(c => new Kangaroo
+                if(kangaroo.HostingParty == null)
                 {
-                    Id = c.Id,
-                    Name = c.Host.Name + "'s Party",
-                }), "Id", "Name");
+                    var data = new SelectList(
+                        dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
+                        .Select(c => new Kangaroo
+                        {
+                            Id = c.Id,
+                            Name = c.Host.Name + "'s Party",
+                        }), "Id", "Name");
 
-                ViewData["Parties"] = data.Any() ? data : null;
+                    ViewData["Parties"] = data.Any() ? data : null;
+                }
 
                 return View(kangaroo);
             }
@@ -90,20 +93,35 @@ namespace KangarooParty.Controllers
                 .Include(c => c.AttendingParty)
                 .FirstOrDefaultAsync(c => c.Id == template.Id);
 
+            var party = await dbContext.Parties
+                .Include(c => c.Attendees)
+                .FirstOrDefaultAsync(c => c.Id == template.AttendingPartyId);
+
             if (kangaroo != null)
             {
                 kangaroo.Name = template.Name;
-                kangaroo.AttendingPartyId = template.AttendingPartyId;
 
-                var data = new SelectList(
-                dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
-                .Select(c => new Kangaroo
+                if(party != null)
                 {
-                    Id = c.Id,
-                    Name = c.Host.Name + "'s Party",
-                }), "Id", "Name");
+                    kangaroo.AttendingPartyId = template.AttendingPartyId;
 
-                ViewData["Parties"] = data.Any() ? data : null;
+                    //update prestige based on participant count
+                    party.Prestige = (party.Attendees.Count() + 1) / 5;
+                }
+
+                //if kangaroo is not hosting party, allow party joining
+                if (kangaroo.HostingParty == null)
+                {
+                    var data = new SelectList(
+                        dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
+                        .Select(c => new Kangaroo
+                        {
+                            Id = c.Id,
+                            Name = c.Host.Name + "'s Party",
+                        }), "Id", "Name");
+
+                    ViewData["Parties"] = data.Any() ? data : null;
+                }
 
                 await dbContext.SaveChangesAsync();
             }

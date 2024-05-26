@@ -3,7 +3,24 @@
 *@
 @{
     @model List<KangarooParty.Models.Party>
-    <h1>Parties</h1>
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>Parties</h1>
+            </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Party" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Party" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
 
     @if (Model != null)
     {
@@ -13,12 +30,12 @@
                 {
                     <div class="col-auto">
                         <div class="card" style="width: 18rem;">
-                            <img src="..." class="card-img-top" alt="...">
+                            <img src="~/images/kangarooparty.jpg" style="width:17vw;align-self:center" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title"><a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@p.Id">@p.Host.Name's Party</a></h5>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Level @p.Prestige</li>
+                                <li class="list-group-item">Prestige Level: @p.Prestige</li>
                                 <li class="list-group-item">@p.Attendees.Count() Guest Kangaroos</li>
                             </ul>
                         </div>

@@ -4,11 +4,29 @@
 @{
     @model KangarooParty.Models.Kangaroo
 
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>@Model.Name the Kangaroo</h1>
+            </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" asp-controller="Kangaroo" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Kangaroo" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
+
 
     <center>
-        <h1>@Model.Name the Kangaroo</h1>
         <div class="card mb-3 text-center" style="width: 48rem;">
-            <img src="..." class="card-img-top" alt="...">
+            <img src="~/images/kangaroo@(Model.Pic).jpg" class="card-img-top" alt="...">
             <div class="card-body">
                 @if (Model.HostingParty != null)
                 {
@@ -34,9 +52,17 @@
                 </div>
                 <div class="modal-body">
                     <h3>Change Name</h3>
-                        <input type="text" required class="form-control" asp-for="Name">
+                    <input type="text" required class="form-control" asp-for="Name">
                     <h3>Go to a Party</h3>
+                    @if (ViewBag.Parties != null)
+                    {
                         <select class="form-select" asp-for="AttendingPartyId" asp-items="ViewBag.Parties"></select>
+                    }
+                    else
+                    {
+                        <h5>No parties to join!</h5>
+                    }
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

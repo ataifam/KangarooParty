@@ -3,7 +3,25 @@
 *@
 @{
     @model KangarooParty.Models.CreatePartyModel
-    <h1>Create a Party!</h1>
+
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>Create a Party!</h1>
+            </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" asp-controller="Party" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Party" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
 
     @if (ViewBag.Kangaroos != null)
     {
@@ -17,9 +35,10 @@
 
             <button type="submit" class="btn btn-primary mb-3">Submit</button>
         </form>
-    } else
-{
-            <h3>Create a Kangaroo <a class="nav-link text-dark" asp-area="" asp-controller="Kangaroo" asp-action="Create">here</a> to start a party!</h3>
-}
+    }
+    else
+    {
+        <h3>Create a Kangaroo <a class="nav-link text-dark" asp-area="" asp-controller="Kangaroo" asp-action="Create">here</a> to start a party!</h3>
+    }
 
 }

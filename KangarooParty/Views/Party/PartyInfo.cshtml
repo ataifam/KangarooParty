@@ -4,17 +4,35 @@
 @{
     @model KangarooParty.Models.Party
 
+    <div class="container text-center">
+        <div class="row justify-content-between">
+            <div class="col-4">
+                <h1>@Model.Host.Name's Party</h1>
+            </div>
+            <div class="col-2">
+                <ul class="nav nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" asp-controller="Party" asp-action="Index">All</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Party" asp-action="Create">Create</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
+
     <center>
-        <h1>@Model.Host.Name's Party</h1>
         <div class="card mb-3 text-center" style="width: 48rem;">
-            <img src="..." class="card-img-top" alt="...">
+            <img src="~/images/kangarooparty.jpg" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">Prestige Level: @Model.Prestige</h5>
                 <h5 class="card-title">Kangaroo Attendees:</h5>
                 @foreach (Kangaroo k in Model.Attendees)
-                    {
+                {
                     <p class="card-text"><a asp-controller="Kangaroo" asp-action="KangarooInfo" asp-route-id="@k.Id">@k.Name</a></p>
-                    }
+                }
             </div>
         </div>
     </center>
@@ -24,15 +42,15 @@
     <!-- Modal -->
     <div class="modal fade" id="hostModal" tabindex="-1" aria-labelledby="hostModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-             @if (ViewBag.Kangaroos != null)
-             {
+            @if (ViewBag.Kangaroos != null)
+            {
                 <form method="post" class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="hostModalLabel">Change Host</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <!--  <label asp-for="Id" data="">'s Party</label>-->
+                        <!--  <label asp-for="Id" data="">'s Party</label>-->
                         <select class="form-select" asp-for="Host.Id" asp-items="ViewBag.Kangaroos" required></select>
 
                     </div>
@@ -41,9 +59,9 @@
                         <button type="submit" class="btn btn-success">Save changes</button>
                     </div>
                 </form>
-              }
-              else
-              {
+            }
+            else
+            {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="hostModalLabel">Change Host</h1>
@@ -56,7 +74,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
-              }
+            }
         </div>
     </div>
 
