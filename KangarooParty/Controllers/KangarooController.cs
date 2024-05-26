@@ -65,6 +65,7 @@ namespace KangarooParty.Controllers
 
             if (kangaroo != null)
             {
+                //compile list of available parties to join if kangaroo is not a host
                 if(kangaroo.HostingParty == null)
                 {
                     var data = new SelectList(
@@ -89,7 +90,6 @@ namespace KangarooParty.Controllers
         {
             //include all kangaroo related fields, then query specific kangaroo 
             var kangaroo = await dbContext.Kangaroos
-                .Include(c => c.HostingParty)
                 .Include(c => c.AttendingParty)
                 .FirstOrDefaultAsync(c => c.Id == template.Id);
 
@@ -105,24 +105,37 @@ namespace KangarooParty.Controllers
                 {
                     kangaroo.AttendingPartyId = template.AttendingPartyId;
 
-                    //update prestige based on participant count
+                    //update prestige based on new participant count
                     party.Prestige = (party.Attendees.Count() + 1) / 5;
                 }
 
-                //if kangaroo is not hosting party, allow party joining
-                if (kangaroo.HostingParty == null)
-                {
-                    var data = new SelectList(
-                        dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
-                        .Select(c => new Kangaroo
-                        {
-                            Id = c.Id,
-                            Name = c.Host.Name + "'s Party",
-                        }), "Id", "Name");
+                await dbContext.SaveChangesAsync();
+                return RedirectToAction("KangarooInfo", new { kangaroo.Id });
+            }
+            return RedirectToAction("Index");
+        }
 
-                    ViewData["Parties"] = data.Any() ? data : null;
-                }
+        [HttpPost]
+        public async Task<IActionResult> LeaveParty(Kangaroo template)
+        {
+            var kangaroo = await dbContext.Kangaroos.FindAsync(template.Id);
 
+            if (kangaroo != null)
+            {
+                kangaroo.AttendingPartyId = null;
+                await dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Kangaroo template)
+        {
+            var kangaroo = await dbContext.Kangaroos.FindAsync(template.Id);
+
+            if (kangaroo != null)
+            {
+                dbContext.Kangaroos.Remove(kangaroo);
                 await dbContext.SaveChangesAsync();
             }
             return RedirectToAction("Index");

@@ -101,7 +101,6 @@ namespace KangarooParty.Controllers
             //current party
             var party = await dbContext.Parties
                 .Include(c => c.Host)
-                .Include(c => c.Attendees)
                 .FirstOrDefaultAsync(c => c.Id == template.Id);
 
             if (kangaroo != null && party != null)
@@ -111,15 +110,21 @@ namespace KangarooParty.Controllers
                 //assign new host
                 kangaroo.HostingPartyId = party.Id;
 
-                var data = new SelectList(
-                dbContext.Kangaroos.Where(c => c.HostingParty == null && c.AttendingParty == null),
-                "Id",
-                "Name");
-
-                ViewData["Kangaroos"] = data.Any() ? data : null;
-
                 await dbContext.SaveChangesAsync();
-                return View(party);
+                return RedirectToAction("PartyInfo", new { party.Id });
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Party template)
+        {
+            var party = await dbContext.Parties.FindAsync(template.Id);
+
+            if (party != null)
+            {
+                dbContext.Parties.Remove(party);
+                await dbContext.SaveChangesAsync();
             }
             return RedirectToAction("Index");
         }
