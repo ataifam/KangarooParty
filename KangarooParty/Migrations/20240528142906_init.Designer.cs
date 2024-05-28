@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KangarooParty.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240521192408_init")]
+    [Migration("20240528142906_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -36,9 +36,6 @@ namespace KangarooParty.Migrations
                     b.Property<int?>("AttendingPartyId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("HostingPartyId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -49,10 +46,6 @@ namespace KangarooParty.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AttendingPartyId");
-
-                    b.HasIndex("HostingPartyId")
-                        .IsUnique()
-                        .HasFilter("[HostingPartyId] IS NOT NULL");
 
                     b.ToTable("Kangaroos");
                 });
@@ -65,10 +58,16 @@ namespace KangarooParty.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("HostId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Prestige")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HostId")
+                        .IsUnique();
 
                     b.ToTable("Parties");
                 });
@@ -79,21 +78,28 @@ namespace KangarooParty.Migrations
                         .WithMany("Attendees")
                         .HasForeignKey("AttendingPartyId");
 
-                    b.HasOne("KangarooParty.Models.Party", "HostingParty")
-                        .WithOne("Host")
-                        .HasForeignKey("KangarooParty.Models.Kangaroo", "HostingPartyId");
-
                     b.Navigation("AttendingParty");
+                });
 
-                    b.Navigation("HostingParty");
+            modelBuilder.Entity("KangarooParty.Models.Party", b =>
+                {
+                    b.HasOne("KangarooParty.Models.Kangaroo", "Host")
+                        .WithOne("HostingParty")
+                        .HasForeignKey("KangarooParty.Models.Party", "HostId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Host");
+                });
+
+            modelBuilder.Entity("KangarooParty.Models.Kangaroo", b =>
+                {
+                    b.Navigation("HostingParty")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("KangarooParty.Models.Party", b =>
                 {
                     b.Navigation("Attendees");
-
-                    b.Navigation("Host")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

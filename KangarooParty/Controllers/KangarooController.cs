@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using KangarooParty.Data;
@@ -69,7 +70,7 @@ namespace KangarooParty.Controllers
                 if(kangaroo.HostingParty == null)
                 {
                     var data = new SelectList(
-                        dbContext.Parties.Where(c => c.Host.Id != kangaroo.Id && c.Id != kangaroo.AttendingPartyId)
+                        dbContext.Parties.Where(c => c.Id != kangaroo.AttendingPartyId)
                         .Select(c => new Kangaroo
                         {
                             Id = c.Id,
@@ -101,12 +102,27 @@ namespace KangarooParty.Controllers
             {
                 kangaroo.Name = template.Name;
 
+                //determine if a party to attend was selected
                 if(party != null)
                 {
-                    kangaroo.AttendingPartyId = template.AttendingPartyId;
-
-                    //update prestige based on new participant count
-                    party.Prestige = (party.Attendees.Count() + 1) / 5;
+                    /* 2 cases:
+                     * (a) if fmr party is null, add the kangaroo to the new
+                     * party and modify the prestige
+                     * (b) if fmr party is not null, and the fmr party != new
+                     * party, add the kangaroo to new party and account for the
+                     * prestige of both parties
+                     */
+                    if(kangaroo.AttendingParty == null)
+                    {
+                        party.Prestige = (party.Attendees.Count() + 1) / 5;
+                        kangaroo.AttendingPartyId = party.Id;
+                    }
+                    else if(kangaroo.AttendingParty != null && kangaroo.AttendingParty.Id != party.Id)
+                    {
+                        kangaroo.AttendingParty.Prestige = (party.Attendees.Count() - 1) / 5;
+                        party.Prestige = (party.Attendees.Count() + 1) / 5;
+                        kangaroo.AttendingPartyId = party.Id;
+                    }
                 }
 
                 await dbContext.SaveChangesAsync();
@@ -118,12 +134,17 @@ namespace KangarooParty.Controllers
         [HttpPost]
         public async Task<IActionResult> LeaveParty(Kangaroo template)
         {
-            var kangaroo = await dbContext.Kangaroos.FindAsync(template.Id);
+            var kangaroo = await dbContext.Kangaroos
+                .Include(c => c.AttendingParty)
+                .FirstOrDefaultAsync(c => c.Id == template.Id);
 
-            if (kangaroo != null)
+            if (kangaroo != null && kangaroo.AttendingParty != null)
             {
+                kangaroo.AttendingParty.Prestige = (kangaroo.AttendingParty.Attendees.Count() - 1) / 5;
                 kangaroo.AttendingPartyId = null;
+
                 await dbContext.SaveChangesAsync();
+                return RedirectToAction("KangarooInfo", new { kangaroo.Id });
             }
             return RedirectToAction("Index");
         }
@@ -131,10 +152,19 @@ namespace KangarooParty.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Kangaroo template)
         {
-            var kangaroo = await dbContext.Kangaroos.FindAsync(template.Id);
+            var kangaroo = await dbContext.Kangaroos
+                .Include(c => c.HostingParty)
+                .Include(c => c.AttendingParty)
+                .Include(c => c.HostingParty.Attendees)
+                .FirstOrDefaultAsync(c => c.Id == template.Id);
 
             if (kangaroo != null)
             {
+                //account for deleted kangaroo attending a party
+                if(kangaroo.AttendingParty != null)
+                {
+                    kangaroo.AttendingParty.Prestige = (kangaroo.AttendingParty.Attendees.Count() - 1) / 5;
+                }
                 dbContext.Kangaroos.Remove(kangaroo);
                 await dbContext.SaveChangesAsync();
             }

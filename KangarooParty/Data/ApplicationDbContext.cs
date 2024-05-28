@@ -12,12 +12,15 @@ namespace KangarooParty.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Party>()
-                .HasOne(e => e.Host)
-                .WithOne(e => e.HostingParty)
-                .HasForeignKey<Kangaroo>(e => e.HostingPartyId)
-                .IsRequired(false);
+            //kangaroo's party deletes on kangaroo deletion
+            modelBuilder.Entity<Kangaroo>()
+                .HasOne(e => e.HostingParty)
+                .WithOne(e => e.Host)
+                .HasForeignKey<Party>(e => e.HostId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
+            //kangaroo's attending party set to null on party deletion
             modelBuilder.Entity<Party>()
                 .HasMany(e => e.Attendees)
                 .WithOne(e => e.AttendingParty)

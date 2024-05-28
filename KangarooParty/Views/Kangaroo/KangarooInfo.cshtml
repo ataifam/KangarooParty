@@ -30,17 +30,30 @@
             <div class="card-body">
                 @if (Model.HostingParty != null)
                 {
-                    <p class="card-text"><a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.HostingPartyId">@Model.Name's Party</a></p>
+                    <p class="card-text">Hosting: <a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.HostingParty.Id">@Model.Name's Party</a></p>
                 }
                 else if (Model.AttendingParty != null)
                 {
-                    <p class="card-text">At <a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.AttendingPartyId">@Model.AttendingParty.Host.Name's Party</a></p>
+                    <p class="card-text">Attending: <a asp-controller="Party" asp-action="PartyInfo" asp-route-id="@Model.AttendingPartyId">@Model.AttendingParty.Host.Name's Party</a></p>
+                    <form method="post" style="margin: 0; padding: 0; display: inline; border: none;" asp-action="LeaveParty" asp-route-id="@Model.Id">
+                        <button type="submit" class="btn btn-danger">Leave...</button>
+                    </form>
                 }
+                <div class="container text-center">
+                    <div class="card-text row justify-content-between">
+                        <div class="col-2">
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#hostModal">Edit...</button>
+                        </div>
+                        <div class="col-2">
+                            <form method="post" style="margin: 0; padding: 0; display: inline; border: none;" asp-action="Delete" asp-route-id="@Model.Id">
+                                <button type="submit" class="btn btn-danger">Delete...</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </center>
-
-    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#hostModal">Edit...</button>
 
     <!-- Modal -->
     <div class="modal fade" id="hostModal" tabindex="-1" aria-labelledby="hostModalLabel" aria-hidden="true">

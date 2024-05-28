@@ -55,11 +55,8 @@ namespace KangarooParty.Controllers
             {
                 var party = new Party
                 {
-                    Host = kangaroo,
+                    HostId = kangaroo.Id,
                 };
-
-                //assign kangaroo this new party to host
-                kangaroo.HostingPartyId = party.Id;
 
                 await dbContext.AddAsync(party);
                 await dbContext.SaveChangesAsync();
@@ -106,9 +103,7 @@ namespace KangarooParty.Controllers
             if (kangaroo != null && party != null)
             {
                 //remove previous host
-                party.Host.HostingPartyId = null;
-                //assign new host
-                kangaroo.HostingPartyId = party.Id;
+                party.HostId = kangaroo.Id;
 
                 await dbContext.SaveChangesAsync();
                 return RedirectToAction("PartyInfo", new { party.Id });
@@ -119,7 +114,10 @@ namespace KangarooParty.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Party template)
         {
-            var party = await dbContext.Parties.FindAsync(template.Id);
+            var party = await dbContext.Parties
+                .Include(c => c.Host)
+                .Include(c => c.Attendees)
+                .FirstOrDefaultAsync(c => c.Id == template.Id);
 
             if (party != null)
             {
